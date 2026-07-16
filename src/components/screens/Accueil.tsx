@@ -92,7 +92,6 @@ export default function Accueil({ onNavigate }: { onNavigate?: (t: NavTarget) =>
           <div className="stat"><b>35 lits</b><span>réa &amp; chirurgie</span></div>
           <div className="stat"><b>24h – 5 j</b><span>DMS selon l&apos;unité</span></div>
           <div className="stat"><b>2×12h</b><span>jour / nuit + relève</span></div>
-          <div className="stat"><b>{cfg.stat4[0]}</b><span>{cfg.stat4[1]}</span></div>
         </div>
       </div>
 

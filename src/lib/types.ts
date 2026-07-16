@@ -48,7 +48,10 @@ export interface Profile {
 }
 
 // État d'un item du parcours : a = auto-évaluation, t = tuteur (0..3)
+// aDate/tDate : date (YYYY-MM-DD) de la dernière modification, pour le suivi
 export interface ItemStatus {
   a: number;
   t: number;
+  aDate?: string;
+  tDate?: string;
 }

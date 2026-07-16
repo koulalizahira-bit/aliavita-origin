@@ -38,7 +38,7 @@ export default function OriginLoginForm() {
           autoComplete="username"
           autoCapitalize="none"
           spellCheck={false}
-          placeholder="ex : cadre"
+          placeholder="ex : tuteur"
           required
         />
       </div>
@@ -75,8 +75,11 @@ export default function OriginLoginForm() {
           onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
           inputMode="numeric"
           autoComplete="one-time-code"
-          className="sr-only"
           aria-label="Code PIN"
+          style={{
+            position: "absolute", opacity: 0, width: 1, height: 1,
+            border: 0, padding: 0, margin: 0, pointerEvents: "none",
+          }}
         />
       </div>
 

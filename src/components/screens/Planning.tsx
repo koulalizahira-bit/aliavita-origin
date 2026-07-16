@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Printer } from "lucide-react";
 import { useApp } from "../AppContext";
 import { MODES } from "@/lib/parcours";
@@ -19,6 +20,7 @@ function ymd(d: Date) { return d.toISOString().slice(0, 10); }
 // forceUnlocked = true dans la vue tuteur : les cases sont cliquables sans code
 export default function Planning({ forceUnlocked = false }: { forceUnlocked?: boolean }) {
   const { profile, rev, reload } = useApp();
+  const [flash, setFlash] = useState(false);
   void rev;
 
   const etu = profile && MODES[profile.mode] && profile.mode.indexOf("etu") > -1;
@@ -43,6 +45,17 @@ export default function Planning({ forceUnlocked = false }: { forceUnlocked?: bo
     if (next) cur.days[dateStr] = next; else delete cur.days[dateStr];
     jset(key, cur);
     reload();
+    setFlash(true);
+    setTimeout(() => setFlash(false), 1000);
+  }
+  function clearDay(dateStr: string) {
+    if (!forceUnlocked) return;
+    const cur = jget<PlanData>(key, { days: {} });
+    delete cur.days[dateStr];
+    jset(key, cur);
+    reload();
+    setFlash(true);
+    setTimeout(() => setFlash(false), 1000);
   }
 
   if (!profile.debut || !profile.fin) {
@@ -69,6 +82,7 @@ export default function Planning({ forceUnlocked = false }: { forceUnlocked?: bo
     return (
       <button key={dateStr} onClick={() => cycle(dateStr)} disabled={!forceUnlocked || !inStage}
         style={{
+          position: "relative",
           aspectRatio: "1", borderRadius: 9, border: "1px solid var(--line)",
           background: sh ? COLOR[sh] : (inStage ? "#fff" : "#f4f1ea"),
           opacity: inStage ? 1 : .45, padding: 2,
@@ -77,6 +91,19 @@ export default function Planning({ forceUnlocked = false }: { forceUnlocked?: bo
         }}>
         <span style={{ fontSize: ".62rem", color: "var(--petrol-soft)", fontWeight: 700, alignSelf: "flex-start", paddingLeft: 2 }}>{dayNum}</span>
         {sh && <span style={{ fontSize: ".58rem", fontWeight: 800, color: "var(--petrol-deep)", lineHeight: 1, paddingBottom: 2 }}>{SHORT[sh]}</span>}
+        {forceUnlocked && inStage && sh && (
+          <span
+            role="button"
+            aria-label="Effacer ce jour"
+            onClick={(e) => { e.stopPropagation(); clearDay(dateStr); }}
+            style={{
+              position: "absolute", top: 2, right: 2, width: 13, height: 13,
+              borderRadius: "50%", background: "rgba(0,0,0,.3)", color: "#fff",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 8, lineHeight: 1, cursor: "pointer",
+            }}
+          >✕</span>
+        )}
       </button>
     );
   };
@@ -98,9 +125,19 @@ export default function Planning({ forceUnlocked = false }: { forceUnlocked?: bo
       </div>
 
       {forceUnlocked ? (
-        <p className="lead">Cliquez sur un jour pour renseigner le poste. Les modifications sont visibles immédiatement dans l&apos;espace de l&apos;étudiant.</p>
+        <p className="lead">Cliquez sur un jour pour renseigner le poste (repos → jour → nuit → matin → soir). Le petit ✕ en haut à droite d&apos;une case efface uniquement ce jour-là. Les modifications sont visibles immédiatement dans l&apos;espace de l&apos;étudiant.</p>
       ) : (
         <p className="lead">Votre planning établi par votre tuteur. Consultez-le et imprimez-le en PDF.</p>
+      )}
+      {forceUnlocked && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: 6,
+          fontSize: ".8rem", fontWeight: 700, color: "var(--ok)",
+          opacity: flash ? 1 : 0, transition: "opacity .3s ease",
+          marginBottom: 10, height: 18,
+        }}>
+          ✓ Enregistré
+        </div>
       )}
 
       {months.map(({ y, m }) => {

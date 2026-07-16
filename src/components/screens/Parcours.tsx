@@ -7,16 +7,18 @@ import type { ItemStatus } from "@/lib/types";
 
 type PData = Record<string, ItemStatus>;
 
-export default function Parcours() {
+export default function Parcours({ tuteurMode = false }: { tuteurMode?: boolean }) {
   const { profile, rev, reload } = useApp();
   const [curEch, setCurEch] = useState("all");
 
   if (!profile) {
     return (
       <section className="page">
-        <span className="eyebrow">Ta progression</span>
-        <h2 className="title">Mon parcours</h2>
-        <div className="notice rgpd"><span>👤</span><div>Sélectionnez ou créez votre <b>profil</b> dans « Bienvenue ».</div></div>
+        <span className="eyebrow">{tuteurMode ? "Suivi tuteur" : "Ta progression"}</span>
+        <h2 className="title">{tuteurMode ? "Compétences de l'étudiant" : "Mon parcours"}</h2>
+        <div className="notice rgpd"><span>👤</span><div>{tuteurMode
+          ? <>Sélectionnez d&apos;abord un étudiant dans « Étudiant suivi ».</>
+          : <>Sélectionnez ou créez votre <b>profil</b> dans « Bienvenue ».</>}</div></div>
       </section>
     );
   }
@@ -31,6 +33,7 @@ export default function Parcours() {
     const d = jget<PData>(key, {});
     d[id] = d[id] || { a: 0, t: 0 };
     d[id][who] = v;
+    d[id][who === "a" ? "aDate" : "tDate"] = new Date().toISOString().slice(0, 10);
     jset(key, d);
     reload();
   }
@@ -63,9 +66,11 @@ export default function Parcours() {
 
   return (
     <section className="page">
-      <span className="eyebrow">Ta progression — {cfg.label}</span>
-      <h2 className="title">Mon parcours</h2>
-      <p className="lead">Double regard : votre auto-évaluation et celle de votre tuteur, sur une échelle commune. L&apos;anneau reflète ce qui est <b>acquis selon le tuteur</b>.</p>
+      <span className="eyebrow">{tuteurMode ? `Suivi — ${cfg.label}` : `Ta progression — ${cfg.label}`}</span>
+      <h2 className="title">{tuteurMode ? "Compétences de l'étudiant" : "Mon parcours"}</h2>
+      <p className="lead">{tuteurMode
+        ? <>Consultez l&apos;auto-évaluation de l&apos;étudiant et renseignez votre évaluation tuteur, item par item.</>
+        : <>Votre auto-évaluation, sur une échelle commune à celle de votre tuteur. L&apos;anneau reflète ce qui est <b>acquis selon le tuteur</b>.</>}</p>
 
       {banner && <div className="notice info"><span>🎓</span><div>{banner}</div></div>}
 
@@ -108,8 +113,16 @@ export default function Parcours() {
                       {it.s5 && early && <span style={{ fontSize: ".74rem", color: "#7b3fa0" }}> — non attendu avant S5</span>}
                     </div>
                     <div className="evrow">
-                      <span className="evcol">🧑‍🎓 Moi <Sel id={id} who="a" val={st.a} /></span>
-                      <span className="evcol">🧑‍🏫 Tuteur <Sel id={id} who="t" val={st.t} /></span>
+                      <span className="evcol">🧑‍🎓 Moi {tuteurMode
+                        ? <b style={{ fontSize: ".82rem", color: "var(--petrol-deep)" }}>{STATES[st.a]}</b>
+                        : <Sel id={id} who="a" val={st.a} />}
+                        {st.aDate && <span style={{ fontSize: ".68rem", color: "var(--petrol-soft)", fontWeight: 500 }}>· {st.aDate}</span>}
+                      </span>
+                      <span className="evcol">🧑‍🏫 Tuteur {tuteurMode
+                        ? <Sel id={id} who="t" val={st.t} />
+                        : <b style={{ fontSize: ".82rem", color: "var(--petrol-deep)" }}>{STATES[st.t]}</b>}
+                        {st.tDate && <span style={{ fontSize: ".68rem", color: "var(--petrol-soft)", fontWeight: 500 }}>· {st.tDate}</span>}
+                      </span>
                     </div>
                   </div>
                 );

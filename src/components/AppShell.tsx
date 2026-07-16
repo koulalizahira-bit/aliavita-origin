@@ -143,10 +143,11 @@ function Shell({ role }: { role: "tuteur" | "agent" }) {
     {
       key: "suivi", label: "Suivi", icon: <GraduationCap size={22} />,
       children: [
-        { key: "etudiant",  label: "Étudiant suivi",  node: <TuteurProfilePicker /> },
-        { key: "planning",  label: "Planning",          node: <Planning forceUnlocked /> },
-        { key: "bilans",    label: "Bilans",            node: <Tuteur /> },
-        { key: "objectifs", label: "Objectifs",         node: <Objectifs /> },
+        { key: "etudiant",    label: "Étudiant suivi",  node: <TuteurProfilePicker /> },
+        { key: "competences", label: "Compétences",      node: <Parcours tuteurMode /> },
+        { key: "planning",    label: "Planning",          node: <Planning forceUnlocked /> },
+        { key: "bilans",      label: "Bilans",            node: <Tuteur /> },
+        { key: "objectifs",   label: "Objectifs",         node: <Objectifs /> },
       ],
     },
     {
