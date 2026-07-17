@@ -17,7 +17,7 @@ body{font-family:var(--font-hanken),system-ui,sans-serif;color:var(--ink);backgr
   line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:calc(60px + env(safe-area-inset-bottom))}
 h1,h2,h3,h4,.dspl{font-family:var(--font-bricolage),sans-serif;letter-spacing:-.02em;line-height:1.08}
 .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
-header.top{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(251,246,238,.97),rgba(251,246,238,.88));backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+header.top{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(251,246,238,.97),rgba(251,246,238,.88));backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
 .brand{display:flex;align-items:center;gap:13px;padding:13px 0 10px}
 .mark{width:46px;height:46px;border-radius:13px;background:#0f0a1e;display:grid;place-items:center;box-shadow:var(--shadow-sm);flex:none}
 .mark svg{width:30px;height:30px}
